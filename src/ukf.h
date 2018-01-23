@@ -82,6 +82,8 @@ public:
   void SigmaPointPrediction(double delta_t);
   void PredictMeanAndCovariance();
 
+  void PredictRadarMeasurement();
+
   /**
    * ProcessMeasurement
    * @param meas_package The latest measurement data of either radar or laser
