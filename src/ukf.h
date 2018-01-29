@@ -67,7 +67,15 @@ public:
   ///* Sigma point spreading parameter
   double lambda_;
 
+  //create matrix for sigma points in measurement space for radar
+  MatrixXd Zsig_;
 
+  //mean predicted measurement for radar 
+  VectorXd z_pred_;
+
+  //create example matrix for predicted measurement covariance
+  MatrixXd S_;
+  
   /**
    * Constructor
    */
@@ -78,11 +86,12 @@ public:
    */
   virtual ~UKF();
 
-  void GenerateSigmaPoints();
-  void SigmaPointPrediction(double delta_t);
+  MatrixXd GenerateSigmaPoints();
+  void SigmaPointPrediction(double delta_t, MatrixXd Xsig_aug);
   void PredictMeanAndCovariance();
 
   void PredictRadarMeasurement();
+  void UpdateState(VectorXd z);
 
   /**
    * ProcessMeasurement
