@@ -13,7 +13,7 @@ using std::vector;
  */
 UKF::UKF() {
   // if this is false, laser measurements will be ignored (except during init)
-  use_laser_ = false;//true;
+  use_laser_ = true;
 
   // if this is false, radar measurements will be ignored (except during init)
   use_radar_ = true;
@@ -87,6 +87,12 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
       x_(1) = data[1];
     }
 
+    P_ << 1, 0, 0, 0, 0,
+      0, 1, 0, 0, 0,
+      0, 0, 1, 0, 0,
+      0, 0, 0, 1, 0,
+      0, 0, 0, 0, 1;
+
     time_us_ = meas_package.timestamp_;
     is_initialized_ = true;
     return;
@@ -108,6 +114,7 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
 
 MatrixXd UKF::GenerateSigmaPoints() 
 {
+  cout<<"Generate sigma"<<endl;
   //create augmented mean vector
   VectorXd x_aug = VectorXd(n_aug_);
 
@@ -142,6 +149,8 @@ MatrixXd UKF::GenerateSigmaPoints()
 
 void UKF::SigmaPointPrediction(double delta_t, MatrixXd Xsig_aug) 
 {
+  cout<<"prediction sigma"<<endl;
+
   //create matrix with predicted sigma points as columns
   Xsig_pred_ = MatrixXd(n_x_, 2 * n_aug_ + 1);
 
@@ -192,6 +201,9 @@ void UKF::SigmaPointPrediction(double delta_t, MatrixXd Xsig_aug)
 
 void UKF::PredictMeanAndCovariance() 
 {
+  cout<<"predict mean and covar"<<endl;
+
+
   weights_ = VectorXd(2*n_aug_ + 1);
 
   // set weights
@@ -228,6 +240,8 @@ void UKF::Prediction(double delta_t) {
 }
 
 void UKF::PredictRadarMeasurement() {
+
+  cout<<"predict radar measurement"<<endl;
 
   //set measurement dimension, radar can measure r, phi, and r_dot
   int n_z = 3;
@@ -291,6 +305,9 @@ void UKF::PredictRadarMeasurement() {
 }
 
 void UKF::UpdateState(VectorXd z) {
+
+  cout<<"update state"<<endl;
+
 
   //set measurement dimension, radar can measure r, phi, and r_dot
   int n_z = 3;
