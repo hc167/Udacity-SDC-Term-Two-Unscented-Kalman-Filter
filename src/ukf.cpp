@@ -28,10 +28,10 @@ UKF::UKF():std_laspx_(0.15), std_laspy_(0.15), std_radr_(0.3), std_radphi_(0.03)
     0, 0, 0, 0, 2;
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
-  std_a_ = 30;
+  std_a_ = 0.45;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = 30;
+  std_yawdd_ = 0.3;
   
   is_initialized_ = false;
 
@@ -287,6 +287,11 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
   //update state mean and covariance matrix
   x_ = x_ + K * z_diff;
   P_ = P_ - K * S * K.transpose();
+
+  VectorXd z_k1_k = z - z_pred;
+  double NIS = z_k1_k.transpose()*S.inverse()*z_k1_k;
+
+  cout<<"Radar NIS: "<<NIS<<endl;
 }
 
 void UKF::UpdateLidar(MeasurementPackage meas_package) {
@@ -317,5 +322,9 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
   long x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H) * P_;
-  
+
+  VectorXd z_k1_k = z - z_pred;
+  double NIS = z_k1_k.transpose()*S.inverse()*z_k1_k;
+
+  cout<<"Lidar NIS: "<<NIS<<endl;
 }
